@@ -1,5 +1,5 @@
 /*
-  INF3105 - Structures de données et algorithmes
+  INF3105 - Structures de donn?es et algorithmes
   Hiver 2020.
   TP2
 */
@@ -19,7 +19,7 @@ int tp2(istream& entree){
     while(entree){
         string typecommande;
         entree >> typecommande;
-        if(!entree) break; // détection fin ==> sortie
+        if(!entree) break; // d?tection fin ==> sortie
 
         if(typecommande=="PRESCRIPTION"){
             char deuxpoints=0;
@@ -31,10 +31,10 @@ int tp2(istream& entree){
             	int dose;
             	int rep;
             	entree >> dose >> rep;
-            	// À compléter ****
+            	// ? compl?ter ****
             	entree >> nomMed;
             }
-            // À compléter *****
+            // ? compl?ter *****
             cout << "?";
         }else if(typecommande=="APPROV"){
         	string nomMed;
@@ -46,22 +46,22 @@ int tp2(istream& entree){
         		int quantite;
         		Date dateexpiration;
         		entree >> quantite >> dateexpiration;
-        		// À compléter
+        		// ? compl?ter
         		entree >> nomMed;
         	}
-        	// À compléter
+        	// ? compl?ter
         	cout << "APPROV OK";
         }else if(typecommande=="STOCK"){
         	char pointvirgule=0;
             entree >> pointvirgule;
             assert(pointvirgule==';');
-            // À compléter
+            // ? compl?ter
             cout << "?";
         }else if(typecommande=="DATE"){
         	char pointvirgule=0;
         	entree >> maintenant >> pointvirgule;
         	assert(pointvirgule==';');
-        	// À compléter
+        	// ? compl?ter
         	cout << "?";
         }else{
             cout << "Transaction '" << typecommande << "' invalide!" << endl;
@@ -74,8 +74,8 @@ int tp2(istream& entree){
 }
 // syntaxe d'appel : ./tp2 [nomfichier.txt]
 int main(int argc, const char** argv){
-    // Gestion de l'entrée :
-    //  - lecture depuis un fichier si un argument est spécifié;
+    // Gestion de l'entr?e :
+    //  - lecture depuis un fichier si un argument est sp?cifi?;
     //  - sinon, lecture depuis std::cin.
     if(argc>1){
          std::ifstream entree_fichier(argv[1]);
