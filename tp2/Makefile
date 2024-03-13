@@ -6,7 +6,7 @@
 #OPTIONS = -g -O0 -Wall
 OPTIONS = -O2 -Wall
 
-all : tp2 testdate
+all : tp2 #testdate
 
 tp2 : tp2.cpp date.o stock.o 
 	g++ ${OPTIONS} -o tp2 tp2.cpp date.o stock.o 
@@ -14,11 +14,11 @@ tp2 : tp2.cpp date.o stock.o
 date.o : date.cpp date.h
 	g++ ${OPTIONS} -c -o date.o date.cpp
 
-stock.o : stock.cpp stock.h arbreavl.h
+stock.o : stock.cpp stock.h
 	g++ ${OPTIONS} -c -o stock.o stock.cpp
 
-testdate : testdate.cpp date.o
-	g++ $(OPTIONS) -o testdate testdate.cpp date.o
+#testdate : testdate.cpp date.o
+#	g++ $(OPTIONS) -o testdate testdate.cpp date.o
 
 clean:
 	rm -rf tp2 testdate *~ *.o

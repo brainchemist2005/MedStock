@@ -15,6 +15,7 @@
 using namespace std;
 
 int tp2(istream& entree){
+    Stock stock;
     Date maintenant;
     while(entree){
         string typecommande;
@@ -46,16 +47,19 @@ int tp2(istream& entree){
         		int quantite;
         		Date dateexpiration;
         		entree >> quantite >> dateexpiration;
-        		// ? compl?ter
+        		Medication med(nomMed,quantite,dateexpiration);
+                stock.insert(med);
         		entree >> nomMed;
-        	}
+            }
         	// ? compl?ter
         	cout << "APPROV OK";
         }else if(typecommande=="STOCK"){
-        	char pointvirgule=0;
+        	char pointvirgule=0,deuxpoints=0;
+            string prescription;
             entree >> pointvirgule;
             assert(pointvirgule==';');
-            // ? compl?ter
+            cout << Stock::Stockdate << " Here date ? " << endl;
+            stock.printInOrder(stock.getRoot());
             cout << "?";
         }else if(typecommande=="DATE"){
         	char pointvirgule=0;

@@ -1,6 +1,5 @@
 /*  AUTEUR(S):
-    1) Nom + Code permanent du l'étudiant.e 1
-    2) Nom + Code permanent du l'étudiant.e 2
+    1) BOUARGAN Zakariae BOUZ90340206
 */
 
 #if !defined(__DATE_H__)
@@ -8,10 +7,18 @@
 
 #include <iostream>
 
+using namespace std;
+
 class Date{
   public:
-	Date();
-	// À compléter
+    Date();
+
+    Date(const string& Syear, const string& Smonth, const string& Sday);
+
+    int year,month,day;
+
+
+	// ï¿½ complï¿½ter
     bool operator <(const Date& date) const;
     int operator - (const Date& date)const;
 
