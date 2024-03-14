@@ -58,15 +58,13 @@ int tp2(istream& entree){
             string prescription;
             entree >> pointvirgule;
             assert(pointvirgule==';');
-            cout << Stock::Stockdate << " Here date ? " << endl;
+            cout << "Stock " << maintenant << endl;
             stock.printInOrder(stock.getRoot());
-            cout << "?";
         }else if(typecommande=="DATE"){
         	char pointvirgule=0;
         	entree >> maintenant >> pointvirgule;
         	assert(pointvirgule==';');
-        	// ? compl?ter
-        	cout << "?";
+            cout << maintenant << " OK" << endl;
         }else{
             cout << "Transaction '" << typecommande << "' invalide!" << endl;
             return 2;

@@ -20,13 +20,6 @@ Date::Date() {
     this->year = year;
 }
 
-Date::Date(const string& Syear, const string& Smonth, const string& Sday)
-{
-        year = stoi(Syear);
-        month = stoi(Smonth);
-        day = stoi(Sday);
-    }
-
 
 bool Date::operator<(const Date& d) const {
     if (year != d.year) {
