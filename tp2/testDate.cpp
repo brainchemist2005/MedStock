@@ -1,15 +1,15 @@
-/*  INF3105 - Structures de données et algorithmes
-    UQAM | Faculté des sciences | Département d'informatique
-	Éric Beaudry
+/*  INF3105 - Structures de donnï¿½es et algorithmes
+    UQAM | Facultï¿½ des sciences | Dï¿½partement d'informatique
+	ï¿½ric Beaudry
 */
 #include "date.h"
 #include <sstream>
 #include <assert.h>
 #include <vector> // std::vecteur est permis uniquement pour ce programme test.
 
-int main()
+/*int main()
 {
-    std::cout << "Vérification de la classe Date" << std::endl;
+    std::cout << "Vï¿½rification de la classe Date" << std::endl;
     std::stringstream str("1999-01-01 1999-01-02 1999-01-31 1999-12-01 1999-12-31 2016-12-01 2017-01-02 2017-02-01 2017-04-15 2017-05-04 2017-06-01 2017-10-17");
     std::vector<Date> dates;
     while(!str.eof()){
@@ -52,10 +52,10 @@ int main()
 		(2017-06-01) - (2017-05-04) = 28
 		(2017-10-17) - (2017-06-01) = 138
 		(2018-08-02) - (2018-07-01) = 32
-     */
+
     std::cout << " --- FIN ---" << std::endl;
     return 0;
-}
+}*/
 
 
 

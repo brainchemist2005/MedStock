@@ -6,7 +6,7 @@
 
 
 Stock& Stock::operator+=(const Medication& med) {
-    root = insert(std::move(root), med);
+    root = insert(root, med);
     return *this;
 }
 
@@ -22,44 +22,59 @@ int Stock::getBalance(const AVLNode* node) {
 
 AVLNode* Stock::rightRotate(AVLNode* y) {
     AVLNode* x = y->left;
-    y->left = x->right;
-    x->right = y;
+    AVLNode* T2 = nullptr;
+
+    if (x != nullptr) {
+        T2 = x->right;
+        x->right = y;
+    }
+    y->left = T2;
 
     // Update heights
     y->height = std::max(getHeight(y->left), getHeight(y->right)) + 1;
-    x->height = std::max(getHeight(x->left), getHeight(x->right)) + 1;
+    if (x != nullptr) {
+        x->height = std::max(getHeight(x->left), getHeight(x->right)) + 1;
+    }
 
     return x; // New root
 }
 
+
 AVLNode* Stock::leftRotate(AVLNode* x) {
     AVLNode* y = x->right;
-    x->right = y->left;
-    y->left = x;
+    AVLNode* T2 = nullptr;
+
+    if (y != nullptr) {
+        T2 = y->left;
+        y->left = x;
+    }
+    x->right = T2;
 
     // Update heights
     x->height = std::max(getHeight(x->left), getHeight(x->right)) + 1;
-    y->height = std::max(getHeight(y->left), getHeight(y->right)) + 1;
+    if (y != nullptr) {
+        y->height = std::max(getHeight(y->left), getHeight(y->right)) + 1;
+    }
 
     return y; // New root
 }
 
 
 AVLNode* Stock::insert(AVLNode* node, const Medication& med) {
-    // Step 1: Perform the normal BST insertion
     if (node == nullptr) {
         return new AVLNode(med);
     }
 
-    if (med.expirationDate < node->data.expirationDate) {
-        node->right = insert(node->right, med);
-    } else if (node->data.expirationDate < med.expirationDate) {
+    if (med.name < node->data.name) {
         node->left = insert(node->left, med);
+    } else if (node->data.name < med.name) {
+        node->right = insert(node->right, med);
     } else {
-        // If the medication exists, update its quantity
         node->data.quantity += med.quantity;
         return node;
     }
+
+
 
     // Step 2: Update height of this ancestor node
     node->height = 1 + std::max(getHeight(node->left), getHeight(node->right));
@@ -91,12 +106,15 @@ AVLNode* Stock::insert(AVLNode* node, const Medication& med) {
         return leftRotate(node);
     }
 
+
     // Return the (unchanged) node pointer
     return node;
 }
 
 void Stock::printInOrder(const AVLNode* node) {
-    if (node == nullptr) return; // Base case: empty subtree
+    if (node == nullptr) {
+        return; // Base case: empty subtree
+    }
     printInOrder( node->left); // Visit left subtree
     // Process current node: print medication information
     cout <<  node->data.name << " "
@@ -105,6 +123,22 @@ void Stock::printInOrder(const AVLNode* node) {
     printInOrder( node->right); // Visit right subtree
 }
 
+Medication *Stock::search(AVLNode *node, const string &name) {
+    if (node == nullptr) {
+        return nullptr; // Base case: not found
+    }
+
+    if (name < node->data.name) {
+        // If the search key is less than the node's key, search in the left subtree
+        return search(node->left, name);
+    } else if (name > node->data.name) {
+        // If the search key is greater than the node's key, search in the right subtree
+        return search(node->right, name);
+    } else {
+        // Found a node with a matching key
+        return &(node->data);
+    }
+}
 
 std::ostream& operator << (std::ostream& os, Stock& stock){
 

@@ -11,32 +11,78 @@
 #include <limits>
 #include "date.h"
 #include "stock.h"
+#include <vector>
 
 using namespace std;
+
+std::vector<Medication> table;
+
+void insert(const Medication& value) {
+    bool found = false;
+    size_t updateIndex = 0;
+
+    for (size_t i = 0; i < table.size(); ++i) {
+        if (table[i].name == value.name) {
+            table[i].quantity += value.quantity;
+            found = true;
+            updateIndex = i;
+            break;
+        }
+    }
+
+    if (found) {
+        Medication updatedMed = table[updateIndex];
+        table.erase(table.begin() + updateIndex);
+        insert(updatedMed);
+    } else {
+        size_t insertPos = 0;
+        while (insertPos < table.size() && table[insertPos].name < value.name) {
+            ++insertPos;
+        }
+        table.insert(table.begin() + insertPos, value);
+    }
+}
+
 
 int tp2(istream& entree){
     Stock stock;
     Date maintenant;
+    int i=0;
+
     while(entree){
         string typecommande;
         entree >> typecommande;
         if(!entree) break; // d?tection fin ==> sortie
-
         if(typecommande=="PRESCRIPTION"){
             char deuxpoints=0;
             entree >> deuxpoints;
             assert(deuxpoints==':');
             string nomMed;
             entree >> nomMed;
+            int traitement;
+            cout << "Prescription " << ++i << endl;
             while(entree && nomMed!=";"){
             	int dose;
             	int rep;
             	entree >> dose >> rep;
-            	// ? compl?ter ****
+                traitement = dose*rep;
+                Medication *med = stock.search(nomMed);
+                if(med != nullptr){
+                    if(med->quantity >= traitement && maintenant < med->expirationDate) {
+                        cout << med->name << " " << dose << " " << rep << " OK" << endl;
+                        med->quantity -= dose*rep;
+                    }
+                }
+
+                else {
+                    cout << nomMed << " " << dose << " " << rep << " COMMANDE" << endl;
+                    Medication med(nomMed,dose*rep);
+                    insert(med);
+                }
+
             	entree >> nomMed;
             }
-            // ? compl?ter *****
-            cout << "?";
+
         }else if(typecommande=="APPROV"){
         	string nomMed;
         	char deuxpoints=0;
@@ -48,6 +94,7 @@ int tp2(istream& entree){
         		Date dateexpiration;
         		entree >> quantite >> dateexpiration;
         		Medication med(nomMed,quantite,dateexpiration);
+                stock.printInOrder();
                 stock.insert(med);
         		entree >> nomMed;
             }
@@ -59,12 +106,20 @@ int tp2(istream& entree){
             entree >> pointvirgule;
             assert(pointvirgule==';');
             cout << "Stock " << maintenant << endl;
-            stock.printInOrder(stock.getRoot());
+            stock.printInOrder();
         }else if(typecommande=="DATE"){
         	char pointvirgule=0;
         	entree >> maintenant >> pointvirgule;
         	assert(pointvirgule==';');
-            cout << maintenant << " OK" << endl;
+            if((int)table.size() == 0)
+                cout << maintenant << " OK" << endl;
+
+            else
+                cout << maintenant << " COMMANDES :" << endl;
+
+            for(i=0 ; i< (int)table.size() ; i++)
+                cout << table[i].name << " " << table[i].quantity << endl;
+            table.clear();
         }else{
             cout << "Transaction '" << typecommande << "' invalide!" << endl;
             return 2;

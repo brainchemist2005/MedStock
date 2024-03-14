@@ -14,9 +14,11 @@ struct Medication {
     int quantity;
     Date expirationDate;
 
-    Medication(std::string n, int q, Date& e)
-            : name(std::move(n)), quantity(q), expirationDate(e) {}
+    Medication(string& n, int q, Date& e)
+            : name(n), quantity(q), expirationDate(e) {}
 
+
+    Medication(string& n, int q) : name(n) , quantity(q) {}
 
     bool operator<(const Date& other) const {
         return expirationDate - other;
@@ -39,19 +41,17 @@ public:
     Stock() : root(nullptr) {}
     Stock& operator+=(const Medication& med);
     friend std::ostream& operator<<(std::ostream& os, const Stock& stock);
-    void printInOrder(const AVLNode* node);
     void insert(const Medication& med) {
         root = insert(root, med);
     }
-
-    AVLNode* getRoot()
-    {
-        return root;
+    Medication* search(const std::string& name) {
+        return search(root, name);
     }
 
-    void setRoot(AVLNode* root1) {
-        root = root1;
+    void printInOrder(){
+        printInOrder(root);
     }
+
 
 private:
     AVLNode* root;
@@ -61,6 +61,8 @@ private:
     AVLNode* rightRotate(AVLNode* y);
     AVLNode* leftRotate(AVLNode* x);
     AVLNode* insert(AVLNode* node, const Medication& med);
+    Medication* search(AVLNode* node, const std::string& name);
+    void printInOrder(const AVLNode* node);
 
 
 };
