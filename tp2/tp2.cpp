@@ -94,7 +94,6 @@ int tp2(istream& entree){
         		Date dateexpiration;
         		entree >> quantite >> dateexpiration;
         		Medication med(nomMed,quantite,dateexpiration);
-                stock.printInOrder();
                 stock.insert(med);
         		entree >> nomMed;
             }
