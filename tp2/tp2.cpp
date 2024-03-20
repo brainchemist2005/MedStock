@@ -65,10 +65,10 @@ int tp2(istream& entree,Stock& stock){
             	int rep;
             	entree >> dose >> rep;
                 traitement = dose*rep;
-                Medication *med = stock.searcher(nomMed,maintenant);
-                if(med != nullptr && med-> quantity >= traitement){
-                        cout << med->name << " " << dose << " " << rep << "  OK" << endl;
-                        med->quantity -= traitement;
+                Medication *med = stock.searcher(nomMed,maintenant,traitement);
+                if(med != nullptr && med-> quantity >= traitement && med->expirationDate - maintenant >= traitement){
+                    cout << med->name << " " << dose << " " << rep << "  OK" << endl;
+                    med->quantity -= traitement;
                 }
 
                 else {

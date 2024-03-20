@@ -125,7 +125,7 @@ void Stock::printInOrder(const AVLNode* node, Date date) {
 
     printInOrder( node->left, date); // Visit left subtree
     // Process current node: print medication information
-    if (date < node->data.expirationDate) {
+    if (date < node->data.expirationDate && node->data.quantity > 0) {
         cout << node->data.name << " "
              << node->data.quantity << " "
              << node->data.expirationDate << std::endl;
@@ -135,31 +135,32 @@ void Stock::printInOrder(const AVLNode* node, Date date) {
 
 }
 
-// Helper function to recursively search and update the best match if conditions are met
-void Stock::searchHelper(AVLNode *node, const string &name, const Date &maintenant, Medication *&bestMatch) {
+void Stock::searchHelper(AVLNode *node, const string &name, const Date &maintenant, int desiredQuantity, Medication *&bestMatch, Date &closestExpiration) {
     if (node == nullptr) {
         return; // Base case: not found
     }
 
-    searchHelper(node->left, name, maintenant, bestMatch);
+    searchHelper(node->left, name, maintenant, desiredQuantity, bestMatch, closestExpiration);
 
-    // Check if current node matches the criteria: name matches, not expired, and has a larger quantity than the current best match
-    if (node->data.name == name && maintenant < node->data.expirationDate) {
-        if (bestMatch == nullptr || node->data.quantity > bestMatch->quantity) {
+    // Check if current node matches the criteria: name matches, not expired, and sufficient quantity
+    if (node->data.name == name && maintenant < node->data.expirationDate && node->data.quantity >= desiredQuantity) {
+        // Update bestMatch if no match found yet or found one with a closer expiration date
+        if (bestMatch == nullptr || (node->data.expirationDate < closestExpiration)) {
             bestMatch = &(node->data);
+            closestExpiration = node->data.expirationDate;
         }
     }
 
-    searchHelper(node->right, name, maintenant, bestMatch);
+    searchHelper(node->right, name, maintenant, desiredQuantity, bestMatch, closestExpiration);
 }
 
-// Public search function that initiates the recursive search and returns the best match found
-Medication *Stock::search(const string &name, const Date &maintenant) {
+// Adjusted public search function to include desiredQuantity
+Medication *Stock::search(const string &name, const Date &maintenant, int desiredQuantity) {
     Medication *bestMatch = nullptr;
-    searchHelper(root, name, maintenant, bestMatch); // Start the search from the root
+    Date closestExpiration; // Initialize with max possible date
+    searchHelper(root, name, maintenant, desiredQuantity, bestMatch, closestExpiration); // Start the search from the root
     return bestMatch;
 }
-
 
 
 std::ostream& operator << (std::ostream& os, Stock& stock){

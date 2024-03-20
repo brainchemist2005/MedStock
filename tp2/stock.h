@@ -49,8 +49,8 @@ public:
     void insert(const Medication& med) {
         root = insert(root, med);
     }
-    Medication* searcher(const std::string& name,const Date maintenant) {
-        return search(name, maintenant);
+    Medication* searcher(const std::string& name,const Date maintenant,int n) {
+        return search(name, maintenant,n);
     }
 
     void printInOrder(Date date){
@@ -66,11 +66,11 @@ private:
     AVLNode* rightRotate(AVLNode* y);
     AVLNode* leftRotate(AVLNode* x);
     AVLNode* insert(AVLNode* node, const Medication& med);
-    Medication* search(const std::string& name,const Date &maintenant);
+    Medication* search(const std::string& name,const Date &maintenant,int n);
     void printInOrder(const AVLNode* node, Date date);
 
 
-    void searchHelper(AVLNode *node, const string &name, const Date &maintenant, Medication *&bestMatch);
+    void searchHelper(AVLNode *node, const string &name, const Date &maintenant,int n, Medication *&bestMatch, Date& closetExpDate);
 };
 
 #endif
