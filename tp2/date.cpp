@@ -20,6 +20,12 @@ Date::Date() {
     this->year = year;
 }
 
+Date::Date(const string& Syear, const string& Smonth, const string& Sday) {
+    year = std::stoi(Syear);
+    month = std::stoi(Smonth);
+    day = std::stoi(Sday);
+}
+
 
 bool Date::operator<(const Date& d) const {
     if (year != d.year) {
@@ -64,12 +70,17 @@ int countDays(int year, int month, int day) {
 }
 
 int Date::operator-(const Date& date) const {
-    // Calculate the total number of days for both dates
     int days1 = countDays(year, month, day);
     int days2 = countDays(date.year, date.month, date.day);
 
-    // Return the difference between the two day counts
     return days1 - days2;
+}
+
+bool Date::operator==(const Date &date) const {
+    if(day == date.day && month == date.month && year == date.year)
+        return true;
+
+    return false;
 }
 
 
@@ -87,7 +98,7 @@ std::istream& operator>>(std::istream& is, Date& d) {
     is >> a >> t1 >> m >> t2 >> j;
     assert(t1 == '-');
     assert(t2 == '-');
-    if ((a > 0) && (m > 0 && m <= 12) && (j > 0 && j <= 31)) { // Basic validation
+    if ((a > 0) && (m > 0 && m <= 12) && (j > 0 && j <= 31)) {
         d.year = a;
         d.month = m;
         d.day = j;

@@ -61,84 +61,106 @@ AVLNode* Stock::leftRotate(AVLNode* x) {
 
 
 AVLNode* Stock::insert(AVLNode* node, const Medication& med) {
+    // Base case: The spot for insertion is found
     if (node == nullptr) {
         return new AVLNode(med);
     }
 
-    if (med.name < node->data.name) {
-        node->left = insert(node->left, med);
-    } else if (node->data.name < med.name) {
-        node->right = insert(node->right, med);
-    } else {
-        node->data.quantity += med.quantity;
+    // Check for exact match (same name and expiration date) first
+    if (node->data.name == med.name && node->data.expirationDate == med.expirationDate) {
+        node->data.quantity += med.quantity; // Exact match found, updating quantity
         return node;
     }
 
+    // Decide on the insertion path: left or right subtree
+    if (med.name < node->data.name || (med.name == node->data.name && med.expirationDate < node->data.expirationDate)) {
+        // Go left
+        node->left = insert(node->left, med);
+    } else {
+        // Go right
+        node->right = insert(node->right, med);
+    }
 
-
-    // Step 2: Update height of this ancestor node
+    // Update height of the current node
     node->height = 1 + std::max(getHeight(node->left), getHeight(node->right));
 
-    // Step 3: Get the balance factor to check whether this node became unbalanced
+    // Calculate the balance factor to check whether this node has become unbalanced
     int balance = getBalance(node);
 
-    // Step 4: If this node becomes unbalanced, then there are 4 cases
+    // Perform rotations if necessary to maintain the AVL property
 
     // Left Left Case
-    if (balance > 1 && med.expirationDate < node->left->data.expirationDate) {
+    if (balance > 1 && (med.name < node->left->data.name || (med.name == node->left->data.name && med.expirationDate < node->left->data.expirationDate))) {
         return rightRotate(node);
     }
 
     // Right Right Case
-    if (balance < -1 && node->right->data.expirationDate < med.expirationDate) {
+    if (balance < -1 && (med.name > node->right->data.name || (med.name == node->right->data.name &&  node->right->data.expirationDate < med.expirationDate ))) {
         return leftRotate(node);
     }
 
     // Left Right Case
-    if (balance > 1 && node->left->data.expirationDate < med.expirationDate) {
+    if (balance > 1 && (med.name > node->left->data.name || (med.name == node->left->data.name && node->left->data.expirationDate < med.expirationDate ))) {
         node->left = leftRotate(node->left);
         return rightRotate(node);
     }
 
     // Right Left Case
-    if (balance < -1 && med.expirationDate < node->right->data.expirationDate) {
+    if (balance < -1 && (med.name < node->right->data.name || (med.name == node->right->data.name && med.expirationDate < node->right->data.expirationDate))) {
         node->right = rightRotate(node->right);
         return leftRotate(node);
     }
 
-
-    // Return the (unchanged) node pointer
+    // Return the node pointer (potentially updated)
     return node;
 }
 
-void Stock::printInOrder(const AVLNode* node) {
+
+
+void Stock::printInOrder(const AVLNode* node, Date date) {
     if (node == nullptr) {
         return; // Base case: empty subtree
     }
-    printInOrder( node->left); // Visit left subtree
+
+
+    printInOrder( node->left, date); // Visit left subtree
     // Process current node: print medication information
-    cout <<  node->data.name << " "
-        << node->data.quantity << " "
-        << node->data.expirationDate << std::endl;
-    printInOrder( node->right); // Visit right subtree
+    if (date < node->data.expirationDate) {
+        cout << node->data.name << " "
+             << node->data.quantity << " "
+             << node->data.expirationDate << std::endl;
+    }
+    printInOrder( node->right, date); // Visit right subtree
+
+
 }
 
-Medication *Stock::search(AVLNode *node, const string &name) {
+// Helper function to recursively search and update the best match if conditions are met
+void Stock::searchHelper(AVLNode *node, const string &name, const Date &maintenant, Medication *&bestMatch) {
     if (node == nullptr) {
-        return nullptr; // Base case: not found
+        return; // Base case: not found
     }
 
-    if (name < node->data.name) {
-        // If the search key is less than the node's key, search in the left subtree
-        return search(node->left, name);
-    } else if (name > node->data.name) {
-        // If the search key is greater than the node's key, search in the right subtree
-        return search(node->right, name);
-    } else {
-        // Found a node with a matching key
-        return &(node->data);
+    searchHelper(node->left, name, maintenant, bestMatch);
+
+    // Check if current node matches the criteria: name matches, not expired, and has a larger quantity than the current best match
+    if (node->data.name == name && maintenant < node->data.expirationDate) {
+        if (bestMatch == nullptr || node->data.quantity > bestMatch->quantity) {
+            bestMatch = &(node->data);
+        }
     }
+
+    searchHelper(node->right, name, maintenant, bestMatch);
 }
+
+// Public search function that initiates the recursive search and returns the best match found
+Medication *Stock::search(const string &name, const Date &maintenant) {
+    Medication *bestMatch = nullptr;
+    searchHelper(root, name, maintenant, bestMatch); // Start the search from the root
+    return bestMatch;
+}
+
+
 
 std::ostream& operator << (std::ostream& os, Stock& stock){
 

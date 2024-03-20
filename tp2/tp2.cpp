@@ -44,8 +44,7 @@ void insert(const Medication& value) {
 }
 
 
-int tp2(istream& entree){
-    Stock stock;
+int tp2(istream& entree,Stock& stock){
     Date maintenant;
     int i=0;
 
@@ -60,22 +59,20 @@ int tp2(istream& entree){
             string nomMed;
             entree >> nomMed;
             int traitement;
-            cout << "Prescription " << ++i << endl;
+            cout << "PRESCRIPTION " << ++i << endl;
             while(entree && nomMed!=";"){
             	int dose;
             	int rep;
             	entree >> dose >> rep;
                 traitement = dose*rep;
-                Medication *med = stock.search(nomMed);
-                if(med != nullptr){
-                    if(med->quantity >= traitement && maintenant < med->expirationDate) {
-                        cout << med->name << " " << dose << " " << rep << " OK" << endl;
-                        med->quantity -= dose*rep;
-                    }
+                Medication *med = stock.searcher(nomMed,maintenant);
+                if(med != nullptr && med-> quantity >= traitement){
+                        cout << med->name << " " << dose << " " << rep << "  OK" << endl;
+                        med->quantity -= traitement;
                 }
 
                 else {
-                    cout << nomMed << " " << dose << " " << rep << " COMMANDE" << endl;
+                    cout << nomMed <<" " << dose << " " << rep << "  COMMANDE" << endl;
                     Medication med(nomMed,dose*rep);
                     insert(med);
                 }
@@ -93,19 +90,19 @@ int tp2(istream& entree){
         		int quantite;
         		Date dateexpiration;
         		entree >> quantite >> dateexpiration;
-        		Medication med(nomMed,quantite,dateexpiration);
+                Medication med(nomMed, quantite, dateexpiration, maintenant);
                 stock.insert(med);
         		entree >> nomMed;
             }
         	// ? compl?ter
         	cout << "APPROV OK";
         }else if(typecommande=="STOCK"){
-        	char pointvirgule=0,deuxpoints=0;
+        	char pointvirgule=0;
             string prescription;
             entree >> pointvirgule;
             assert(pointvirgule==';');
-            cout << "Stock " << maintenant << endl;
-            stock.printInOrder();
+            cout << "STOCK " << maintenant << endl;
+            stock.printInOrder(maintenant);
         }else if(typecommande=="DATE"){
         	char pointvirgule=0;
         	entree >> maintenant >> pointvirgule;
@@ -116,8 +113,8 @@ int tp2(istream& entree){
             else
                 cout << maintenant << " COMMANDES :" << endl;
 
-            for(i=0 ; i< (int)table.size() ; i++)
-                cout << table[i].name << " " << table[i].quantity << endl;
+            for(int j=0 ; j< (int)table.size() ; j++)
+                cout << table[j].name << " " << table[j].quantity << endl;
             table.clear();
         }else{
             cout << "Transaction '" << typecommande << "' invalide!" << endl;
@@ -130,6 +127,7 @@ int tp2(istream& entree){
 }
 // syntaxe d'appel : ./tp2 [nomfichier.txt]
 int main(int argc, const char** argv){
+    Stock stock;
     // Gestion de l'entr?e :
     //  - lecture depuis un fichier si un argument est sp?cifi?;
     //  - sinon, lecture depuis std::cin.
@@ -139,11 +137,11 @@ int main(int argc, const char** argv){
              std::cerr << "Erreur d'ouverture du fichier '" << argv[1] << "'" << std::endl;
              return 1;
          }
-         return tp2(entree_fichier);
-    }else
-         return tp2(std::cin);
+          tp2(entree_fichier,stock);
 
-    return 0;
+         return 0;
+    }else
+         return tp2(std::cin,stock);
 }
 
 

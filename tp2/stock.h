@@ -13,9 +13,15 @@ struct Medication {
     std::string name;
     int quantity;
     Date expirationDate;
+    bool expired;
 
-    Medication(string& n, int q, Date& e)
-            : name(n), quantity(q), expirationDate(e) {}
+    Medication(string& n, int q, Date& e , Date maintenant)
+            : name(n), quantity(q), expirationDate(e) {
+        if(maintenant < expirationDate)
+            expired = true;
+        else
+            expired = false;
+    }
 
 
     Medication(string& n, int q) : name(n) , quantity(q) {}
@@ -37,19 +43,18 @@ struct AVLNode {
 
 class Stock {
 public:
-    static Date Stockdate();
     Stock() : root(nullptr) {}
     Stock& operator+=(const Medication& med);
     friend std::ostream& operator<<(std::ostream& os, const Stock& stock);
     void insert(const Medication& med) {
         root = insert(root, med);
     }
-    Medication* search(const std::string& name) {
-        return search(root, name);
+    Medication* searcher(const std::string& name,const Date maintenant) {
+        return search(name, maintenant);
     }
 
-    void printInOrder(){
-        printInOrder(root);
+    void printInOrder(Date date){
+        printInOrder(root, date);
     }
 
 
@@ -61,10 +66,11 @@ private:
     AVLNode* rightRotate(AVLNode* y);
     AVLNode* leftRotate(AVLNode* x);
     AVLNode* insert(AVLNode* node, const Medication& med);
-    Medication* search(AVLNode* node, const std::string& name);
-    void printInOrder(const AVLNode* node);
+    Medication* search(const std::string& name,const Date &maintenant);
+    void printInOrder(const AVLNode* node, Date date);
 
 
+    void searchHelper(AVLNode *node, const string &name, const Date &maintenant, Medication *&bestMatch);
 };
 
 #endif

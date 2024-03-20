@@ -21,8 +21,9 @@ class Date{
 	// � compl�ter
     bool operator <(const Date& date) const;
     int operator - (const Date& date)const;
+    bool operator ==(const Date& date)const;
 
-  private:
+        private:
 
   friend std::ostream& operator << (std::ostream&, const Date& date);
   friend std::istream& operator >> (std::istream&, Date& date);
